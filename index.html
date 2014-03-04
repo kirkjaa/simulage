@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>html5 canvas</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="modernizr.custom.19835.js"></script>
+<script>
+/* long version 
+window.addEventListener("load", eventWindowLoaded, false);
+function eventWindowLoaded(){
+	canvasApp();
+}
+*/
+$(document).ready(function() {
+	canvasApp();
+});
+
+function canvasSupport(){
+	return Modernizr.canvas;
+}
+
+function canvasApp(){
+	if(!canvasSupport()){
+		return false;
+	}
+
+	var theVideo = document.getElementById('media_element');
+
+	var vidOverlayCanvas = document.getElementById('canvasOne');
+	var vidOverlayContext = vidOverlayCanvas.getContext('2d');
+	vidOverlayCanvas.addEventListener("mousedown", getPosition, false);
+
+	var snapshotCanvas = document.getElementById('snapshotCanvas');
+	var snapshotContext = snapshotCanvas.getContext('2d');
+	function drawScreen(){
+
+		// draw text
+		vidOverlayContext.fillStyle = "#FFFFFF";
+		vidOverlayContext.font = "20px_sans";
+		vidOverlayContext.textBaseline = "top";
+		vidOverlayContext.fillText("Play / Stop", 10, 370);
+
+	}
+
+	drawScreen();
+
+	function getPosition(event){
+		var x = event.x;
+		var y = event.y;
+
+		x -= vidOverlayCanvas.offsetLeft;
+		y -= vidOverlayCanvas.offsetTop;
+
+		console.log("x:" + x + " y:" + y);
+
+		snapshotContext.drawImage(theVideo, x-75, y-75, 50, 50, 0, 0, 50, 50);
+
+		//window.open(snapshotCanvas.toDataURL('image/png')); 
+		$('#main').append('<img src="'+snapshotCanvas.toDataURL('image/png')+'" />');
+	}
+
+}
+</script>
+</head>
+<body>
+<div id="main" style="position:absolute;top:50px;left:50px;">
+	<div id="video_player" style="width:640px;height:400px;background-color:black;">
+		<div id="media_layer">
+			<video autoplay id="media_element" width="640" height="360">
+				<source src="/clipcanvas_14348_H264_640x360.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' >
+			</video>
+		</div>
+		<div id="canvas_layer" style="position:absolute;top:0px;left:0px;">
+			<canvas id="canvasOne" width="640" height="400">
+				Your browser does not support HTML5 Canvas.
+			</canvas>
+		</div>
+	</div>
+	<div style="display:none;">
+		<canvas id="snapshotCanvas" width="50" height="50"></canvas>
+	</div>
+</div>
+</body>
+</html>
